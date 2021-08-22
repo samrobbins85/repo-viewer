@@ -2,10 +2,10 @@ env:
     browser: true
     es2021: true
 extends:
-    - "airbnb"
-    - "airbnb/hooks"
-    - "prettier"
+    - "eslint:recommended"
     - "next"
+    - "next/core-web-vitals"
+    - "prettier"
 parserOptions:
     ecmaFeatures:
         jsx: true
