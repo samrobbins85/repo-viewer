@@ -1,13 +1,10 @@
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
-export default function IndexPage({
-	gqlclient,
-	authenticated,
-	setAuthenticated,
-}) {
+export default function IndexPage({ gqlclient }) {
 	const [session] = useSession();
+	const [authenticated, setAuthenticated] = useState(false);
 
 	const { data } = useSWR(
 		authenticated
@@ -41,7 +38,9 @@ export default function IndexPage({
 				/>
 			</Head>
 			<div>
-				<h1 className="text-center">Hello, World </h1>
+				<h1 className="text-center">
+					Hello, World - {authenticated.toString()}{" "}
+				</h1>
 				{!session && (
 					<>
 						Not signed in <br />

@@ -2,13 +2,11 @@ import "../styles/index.css";
 import Head from "next/head";
 import { GraphQLClient } from "graphql-request";
 import { SWRConfig } from "swr";
-import { useState } from "react";
 import { Provider } from "next-auth/client";
 
 function MyApp({ Component, pageProps }) {
 	const client = new GraphQLClient("https://api.github.com/graphql");
 	const fetcher = (query) => client.request(query);
-	const [authenticated, setAuthenticated] = useState(false);
 	return (
 		<>
 			<Head>
@@ -22,12 +20,7 @@ function MyApp({ Component, pageProps }) {
 			</Head>
 			<SWRConfig value={{ fetcher: fetcher }}>
 				<Provider session={pageProps.session}>
-					<Component
-						gqlclient={client}
-						authenticated={authenticated}
-						setAuthenticated={setAuthenticated}
-						{...pageProps}
-					/>
+					<Component gqlclient={client} {...pageProps} />
 				</Provider>
 			</SWRConfig>
 		</>
