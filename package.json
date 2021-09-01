@@ -17,13 +17,9 @@
 		"postcss-import": "^14.0.2",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.2",
-<<<<<<< HEAD
 		"swr": "^1.0.0",
-		"tailwindcss": "^2.2.7",
-		"urql": "^2.0.4"
-=======
+		"urql": "^2.0.4",
 		"tailwindcss": "^2.2.9"
->>>>>>> 263003cf266cff68114df1a56e0bc7bf37e85758
 	},
 	"devDependencies": {
 		"eslint": "^7.32.0",
