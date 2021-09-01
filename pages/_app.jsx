@@ -1,7 +1,9 @@
 import "../styles/index.css";
 import Head from "next/head";
+import { GraphQLClient } from "graphql-request";
 
 function MyApp({ Component, pageProps }) {
+	const client = new GraphQLClient("https://api.github.com/graphql");
 	return (
 		<>
 			<Head>
@@ -13,7 +15,7 @@ function MyApp({ Component, pageProps }) {
 					crossOrigin="anonymous"
 				/>
 			</Head>
-			<Component {...pageProps} />
+			<Component gqlclient={client} {...pageProps} />
 		</>
 	);
 }

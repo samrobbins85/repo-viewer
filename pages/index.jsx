@@ -1,9 +1,33 @@
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
-
-export default function IndexPage() {
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+export default function IndexPage({ gqlclient }) {
 	const [session] = useSession();
-	console.log(session);
+	const [authenticated, setAuthenticated] = useState(false);
+	const fetcher = (query) => gqlclient.request(query);
+
+	const { data } = useSWR(
+		authenticated
+			? `query { 
+		viewer { 
+		  login
+		}
+	  }`
+			: null,
+		fetcher
+	);
+
+	useEffect(() => {
+		if (session?.accessToken) {
+			gqlclient.setHeader(
+				"authorization",
+				`Bearer ${session.accessToken}`
+			);
+			setAuthenticated(true);
+		}
+	}, [session, gqlclient]);
+
 	return (
 		<>
 			<Head>
@@ -18,7 +42,9 @@ export default function IndexPage() {
 				{!session && (
 					<>
 						Not signed in <br />
-						<button onClick={() => signIn()}>Sign in</button>
+						<button onClick={() => signIn("github")}>
+							Sign in
+						</button>
 					</>
 				)}
 				{session && (
@@ -28,6 +54,7 @@ export default function IndexPage() {
 						<button onClick={() => signOut()}>Sign out</button>
 					</>
 				)}
+				{data && <p>Your username is {data.viewer.login}</p>}
 			</div>
 		</>
 	);
