@@ -10,7 +10,7 @@
 	"dependencies": {
 		"autoprefixer": "^10.3.2",
 		"next": "^11.1.0",
-		"next-auth": "^3.28.0",
+		"next-auth": "^3.29.0",
 		"postcss": "^8.3.6",
 		"postcss-import": "^14.0.2",
 		"react": "^17.0.1",
