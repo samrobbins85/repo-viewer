@@ -1,11 +1,13 @@
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useSWR from "swr";
-export default function IndexPage({ gqlclient }) {
+export default function IndexPage({
+	gqlclient,
+	authenticated,
+	setAuthenticated,
+}) {
 	const [session] = useSession();
-	const [authenticated, setAuthenticated] = useState(false);
-	const fetcher = (query) => gqlclient.request(query);
 
 	const { data } = useSWR(
 		authenticated
@@ -14,8 +16,7 @@ export default function IndexPage({ gqlclient }) {
 		  login
 		}
 	  }`
-			: null,
-		fetcher
+			: null
 	);
 
 	useEffect(() => {
@@ -25,8 +26,10 @@ export default function IndexPage({ gqlclient }) {
 				`Bearer ${session.accessToken}`
 			);
 			setAuthenticated(true);
+		} else {
+			setAuthenticated(false);
 		}
-	}, [session, gqlclient]);
+	}, [session, gqlclient, setAuthenticated]);
 
 	return (
 		<>
