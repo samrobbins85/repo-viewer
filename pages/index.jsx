@@ -8,11 +8,16 @@ export default function IndexPage({ gqlclient }) {
 
 	const { data } = useSWR(
 		authenticated
-			? `query { 
-		viewer { 
-		  login
-		}
-	  }`
+			? `
+			{
+				user(login: "samrobbins85") {
+				  repositories(first: 100) {
+					nodes {
+					  name
+					}
+				  }
+				}
+			  }`
 			: null
 	);
 
@@ -56,7 +61,13 @@ export default function IndexPage({ gqlclient }) {
 						<button onClick={() => signOut()}>Sign out</button>
 					</>
 				)}
-				{data && <p>Your username is {data.viewer.login}</p>}
+				<ul>
+					{data &&
+						data.user.repositories.nodes.map((repo) => (
+							<li key={repo.name}>{repo.name}</li>
+						))}
+				</ul>
+				{/* {data && <p>Your username is {data.viewer.login}</p>} */}
 			</div>
 		</>
 	);
