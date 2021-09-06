@@ -1,25 +1,42 @@
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
+
+const getKey = (_, previousPageData) => {
+	if (
+		previousPageData &&
+		!previousPageData.user.repositories.pageInfo.hasNextPage
+	)
+		return null;
+	return `
+	{
+		user(login: "samrobbins85") {
+		  repositories(first: 100 ${
+				previousPageData
+					? `after: "${previousPageData.user.repositories.pageInfo.endCursor}"`
+					: ""
+			}) {
+			nodes {
+			  name
+			}
+			pageInfo {
+				endCursor
+				hasNextPage
+			  }
+		  }
+		}
+	  }`;
+};
+
 export default function IndexPage({ gqlclient }) {
 	const [session] = useSession();
 	const [authenticated, setAuthenticated] = useState(false);
+	const [store, setStore] = useState(false);
 
-	const { data } = useSWR(
-		authenticated
-			? `
-			{
-				user(login: "samrobbins85") {
-				  repositories(first: 100) {
-					nodes {
-					  name
-					}
-				  }
-				}
-			  }`
-			: null
-	);
+	const { data } = useSWRInfinite(authenticated && !store && getKey, {
+		initialSize: 10,
+	});
 
 	useEffect(() => {
 		if (session?.accessToken) {
@@ -32,6 +49,10 @@ export default function IndexPage({ gqlclient }) {
 			setAuthenticated(false);
 		}
 	}, [session, gqlclient, setAuthenticated]);
+
+	if (data) {
+		setStore(data.map((item) => item.user.repositories.nodes).flat());
+	}
 
 	return (
 		<>
@@ -61,13 +82,12 @@ export default function IndexPage({ gqlclient }) {
 						<button onClick={() => signOut()}>Sign out</button>
 					</>
 				)}
-				<ul>
-					{data &&
-						data.user.repositories.nodes.map((repo) => (
+				<ol className="list-decimal">
+					{store &&
+						store.map((repo) => (
 							<li key={repo.name}>{repo.name}</li>
 						))}
-				</ul>
-				{/* {data && <p>Your username is {data.viewer.login}</p>} */}
+				</ol>
 			</div>
 		</>
 	);
