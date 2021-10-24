@@ -2,7 +2,8 @@ import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
 import useSWRInfinite from "swr/infinite";
-
+import { countBy } from "lodash";
+import Link from "next/link";
 const getKey = (_, previousPageData) => {
 	if (
 		previousPageData &&
@@ -19,6 +20,13 @@ const getKey = (_, previousPageData) => {
 			}) {
 			nodes {
 			  name
+			  repositoryTopics(first: 10) {
+				nodes {
+				  topic {
+					name
+				  }
+				}
+			  }
 			}
 			pageInfo {
 				endCursor
@@ -37,6 +45,9 @@ export default function IndexPage({ gqlclient }) {
 	const { data } = useSWRInfinite(authenticated && !store && getKey, {
 		initialSize: 10,
 	});
+	if (store) {
+		console.log(store);
+	}
 
 	useEffect(() => {
 		if (session?.accessToken) {
@@ -51,7 +62,19 @@ export default function IndexPage({ gqlclient }) {
 	}, [session, gqlclient, setAuthenticated]);
 
 	if (data) {
-		setStore(data.map((item) => item.user.repositories.nodes).flat());
+		setStore(
+			countBy(
+				data
+					.map((item) => item.user.repositories.nodes)
+					.flat()
+					.map((item) =>
+						item.repositoryTopics.nodes.map(
+							(elem) => elem.topic.name
+						)
+					)
+					.flat()
+			)
+		);
 	}
 
 	return (
@@ -82,12 +105,19 @@ export default function IndexPage({ gqlclient }) {
 						<button onClick={() => signOut()}>Sign out</button>
 					</>
 				)}
-				<ol className="list-decimal">
+				<div className="flex flex-wrap gap-2 px-4">
 					{store &&
-						store.map((repo) => (
-							<li key={repo.name}>{repo.name}</li>
+						Object.keys(store).map((topic) => (
+							<Link href={`/${topic}`} key={topic}>
+								<a className="p-4 border rounded">
+									<h2 className="text-lg font-semibold">
+										{topic}
+									</h2>
+									<span>{store[topic]} repository</span>
+								</a>
+							</Link>
 						))}
-				</ol>
+				</div>
 			</div>
 		</>
 	);
