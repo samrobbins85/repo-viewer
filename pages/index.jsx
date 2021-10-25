@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { signIn, signOut, useSession } from "next-auth/client";
+import { useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import { countBy } from "lodash";
@@ -87,24 +87,6 @@ export default function IndexPage({ gqlclient }) {
 				/>
 			</Head>
 			<div>
-				<h1 className="text-center">
-					Hello, World - {authenticated.toString()}{" "}
-				</h1>
-				{!session && (
-					<>
-						Not signed in <br />
-						<button onClick={() => signIn("github")}>
-							Sign in
-						</button>
-					</>
-				)}
-				{session && (
-					<>
-						Signed in as {session.user.email} <br />
-						<p>Token -{session.accessToken}</p>
-						<button onClick={() => signOut()}>Sign out</button>
-					</>
-				)}
 				<div className="flex flex-wrap gap-2 px-4 justify-center">
 					{store &&
 						Object.keys(store).map((topic) => (

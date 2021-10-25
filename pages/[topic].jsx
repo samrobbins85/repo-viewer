@@ -9,7 +9,7 @@ const getKey = (previousPageData, topic) => {
 		return null;
 	return `
 	{
-        search(query: "user:samrobbins85 topic:${topic}", type: REPOSITORY, first: 2 ${
+        search(query: "user:samrobbins85 topic:${topic}", type: REPOSITORY, first: 100 ${
 		previousPageData
 			? `after: "${previousPageData.search.pageInfo.endCursor}"`
 			: ""
@@ -19,7 +19,7 @@ const getKey = (previousPageData, topic) => {
               id
               name
               url
-              repositoryTopics(first: 2) {
+              repositoryTopics(first: 100) {
                 nodes {
                   topic {
                     name

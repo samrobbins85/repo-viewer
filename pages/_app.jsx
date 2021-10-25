@@ -3,6 +3,7 @@ import Head from "next/head";
 import { GraphQLClient } from "graphql-request";
 import { SWRConfig } from "swr";
 import { Provider } from "next-auth/client";
+import Layout from "../components/layout";
 
 function MyApp({ Component, pageProps }) {
 	const client = new GraphQLClient("https://api.github.com/graphql");
@@ -20,7 +21,9 @@ function MyApp({ Component, pageProps }) {
 			</Head>
 			<SWRConfig value={{ fetcher: fetcher }}>
 				<Provider session={pageProps.session}>
-					<Component gqlclient={client} {...pageProps} />
+					<Layout>
+						<Component gqlclient={client} {...pageProps} />
+					</Layout>
 				</Provider>
 			</SWRConfig>
 		</>
