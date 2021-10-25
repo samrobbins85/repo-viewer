@@ -105,7 +105,7 @@ export default function IndexPage({ gqlclient }) {
 						<button onClick={() => signOut()}>Sign out</button>
 					</>
 				)}
-				<div className="flex flex-wrap gap-2 px-4">
+				<div className="flex flex-wrap gap-2 px-4 justify-center">
 					{store &&
 						Object.keys(store).map((topic) => (
 							<Link href={`/${topic}`} key={topic}>
