@@ -79,10 +79,10 @@ export default function IndexPage({ gqlclient }) {
 	return (
 		<>
 			<Head>
-				<title>Next.js Template</title>
+				<title>Repository Viewer</title>
 				<meta
 					name="Description"
-					content="My template Next.js application"
+					content="View GitHub repositories grouped by tag"
 				/>
 			</Head>
 			<div>
