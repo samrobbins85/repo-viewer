@@ -94,7 +94,7 @@ export default function IndexPage({ gqlclient }) {
 									<h2 className="text-lg font-semibold">
 										{topic}
 									</h2>
-									<span>
+									<span className="text-gray-700">
 										{store[topic]}{" "}
 										{store[topic] === 1
 											? "repository"
