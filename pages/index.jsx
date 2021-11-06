@@ -7,15 +7,15 @@ import Link from "next/link";
 const getKey = (_, previousPageData) => {
 	if (
 		previousPageData &&
-		!previousPageData.user.repositories.pageInfo.hasNextPage
+		!previousPageData.viewer.repositories.pageInfo.hasNextPage
 	)
 		return null;
 	return `
 	{
-		user(login: "samrobbins85") {
+		viewer {
 		  repositories(first: 100 ${
 				previousPageData
-					? `after: "${previousPageData.user.repositories.pageInfo.endCursor}"`
+					? `after: "${previousPageData.viewer.repositories.pageInfo.endCursor}"`
 					: ""
 			}) {
 			nodes {
@@ -65,7 +65,7 @@ export default function IndexPage({ gqlclient }) {
 		setStore(
 			countBy(
 				data
-					.map((item) => item.user.repositories.nodes)
+					.map((item) => item.viewer.repositories.nodes)
 					.flat()
 					.map((item) =>
 						item.repositoryTopics.nodes.map(

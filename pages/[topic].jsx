@@ -4,37 +4,6 @@ import useSWRInfinite from "swr/infinite";
 import { useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
 import Error from "next/error";
-const getKey = (previousPageData, topic) => {
-	if (previousPageData && !previousPageData.search.pageInfo.hasNextPage)
-		return null;
-	return `
-	{
-        search(query: "user:samrobbins85 topic:${topic}", type: REPOSITORY, first: 100 ${
-		previousPageData
-			? `after: "${previousPageData.search.pageInfo.endCursor}"`
-			: ""
-	}) {
-          nodes {
-            ... on Repository {
-              id
-              name
-              url
-              repositoryTopics(first: 100) {
-                nodes {
-                  topic {
-                    name
-                  }
-                }
-              }
-            }
-          }
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-        }
-      }`;
-};
 
 export default function Topic({ gqlclient }) {
 	const router = useRouter();
@@ -53,6 +22,39 @@ export default function Topic({ gqlclient }) {
 			setAuthenticated(false);
 		}
 	}, [session, gqlclient, setAuthenticated]);
+	const getKey = (previousPageData, topic) => {
+		if (previousPageData && !previousPageData.search.pageInfo.hasNextPage)
+			return null;
+		return `
+		{
+			search(query: "user:${
+				session.user.name
+			} topic:${topic}", type: REPOSITORY, first: 100 ${
+			previousPageData
+				? `after: "${previousPageData.search.pageInfo.endCursor}"`
+				: ""
+		}) {
+			  nodes {
+				... on Repository {
+				  id
+				  name
+				  url
+				  repositoryTopics(first: 100) {
+					nodes {
+					  topic {
+						name
+					  }
+					}
+				  }
+				}
+			  }
+			  pageInfo {
+				hasNextPage
+				endCursor
+			  }
+			}
+		  }`;
+	};
 	const { data, error } = useSWRInfinite(
 		authenticated &&
 			((_, previousPageData) => getKey(previousPageData, topic)),
