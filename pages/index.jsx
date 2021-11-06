@@ -40,14 +40,10 @@ const getKey = (_, previousPageData) => {
 export default function IndexPage({ gqlclient }) {
 	const [session] = useSession();
 	const [authenticated, setAuthenticated] = useState(false);
-	const [store, setStore] = useState(false);
 
 	const { data } = useSWRInfinite(authenticated && !store && getKey, {
 		initialSize: 10,
 	});
-	if (store) {
-		console.log(store);
-	}
 
 	useEffect(() => {
 		if (session?.accessToken) {
@@ -61,19 +57,22 @@ export default function IndexPage({ gqlclient }) {
 		}
 	}, [session, gqlclient, setAuthenticated]);
 
+	let store = false;
 	if (data) {
-		setStore(
-			countBy(
-				data
-					.map((item) => item.viewer.repositories.nodes)
-					.flat()
-					.map((item) =>
-						item.repositoryTopics.nodes.map(
-							(elem) => elem.topic.name
+		store = Object.fromEntries(
+			Object.entries(
+				countBy(
+					data
+						.map((item) => item.viewer.repositories.nodes)
+						.flat()
+						.map((item) =>
+							item.repositoryTopics.nodes.map(
+								(elem) => elem.topic.name
+							)
 						)
-					)
-					.flat()
-			)
+						.flat()
+				)
+			).sort(([, a], [, b]) => b - a)
 		);
 	}
 
@@ -95,7 +94,12 @@ export default function IndexPage({ gqlclient }) {
 									<h2 className="text-lg font-semibold">
 										{topic}
 									</h2>
-									<span>{store[topic]} repository</span>
+									<span>
+										{store[topic]}{" "}
+										{store[topic] === 1
+											? "repository"
+											: "repositories"}
+									</span>
 								</a>
 							</Link>
 						))}
