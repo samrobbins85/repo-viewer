@@ -1,13 +1,10 @@
 import "../styles/index.css";
 import Head from "next/head";
-import { GraphQLClient } from "graphql-request";
-import { SWRConfig } from "swr";
 import { Provider } from "next-auth/client";
 import Layout from "../components/layout";
+import SWRProvider from "../providers/auth";
 
 function MyApp({ Component, pageProps }) {
-	const client = new GraphQLClient("https://api.github.com/graphql");
-	const fetcher = (query) => client.request(query);
 	return (
 		<>
 			<Head>
@@ -19,13 +16,13 @@ function MyApp({ Component, pageProps }) {
 					crossOrigin="anonymous"
 				/>
 			</Head>
-			<SWRConfig value={{ fetcher: fetcher }}>
-				<Provider session={pageProps.session}>
+			<Provider session={pageProps.session}>
+				<SWRProvider>
 					<Layout>
-						<Component gqlclient={client} {...pageProps} />
+						<Component {...pageProps} />
 					</Layout>
-				</Provider>
-			</SWRConfig>
+				</SWRProvider>
+			</Provider>
 		</>
 	);
 }

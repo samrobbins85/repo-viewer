@@ -18,13 +18,7 @@ export default NextAuth({
 		}),
 	],
 	callbacks: {
-		async signIn({ user, account, profile, email, credentials }) {
-			console.log({ user, account, profile, credentials, email });
-		},
-		async jwt(token, user, account) {
-			console.log(user);
-			console.log(account);
-			console.log(token);
+		async jwt(token, _, account) {
 			if (account?.accessToken) {
 				token.accessToken = account.accessToken;
 			}

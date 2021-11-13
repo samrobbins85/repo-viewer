@@ -1,9 +1,10 @@
 import Head from "next/head";
-import { useSession } from "next-auth/client";
-import { useEffect, useState } from "react";
+
 import useSWRInfinite from "swr/infinite";
 import { countBy } from "lodash";
 import Link from "next/link";
+import { useSession } from "next-auth/client";
+
 const getKey = (_, previousPageData) => {
 	if (
 		previousPageData &&
@@ -20,7 +21,7 @@ const getKey = (_, previousPageData) => {
 			}) {
 			nodes {
 			  name
-			  repositoryTopics(first: 10) {
+			  repositoryTopics(first: 100) {
 				nodes {
 				  topic {
 					name
@@ -37,26 +38,11 @@ const getKey = (_, previousPageData) => {
 	  }`;
 };
 
-export default function IndexPage({ gqlclient }) {
+export default function IndexPage() {
 	const [session] = useSession();
-	const [authenticated, setAuthenticated] = useState(false);
-
-	const { data } = useSWRInfinite(authenticated && !store && getKey, {
+	const { data } = useSWRInfinite(session.accessToken && getKey, {
 		initialSize: 10,
 	});
-
-	useEffect(() => {
-		if (session?.accessToken) {
-			gqlclient.setHeader(
-				"authorization",
-				`Bearer ${session.accessToken}`
-			);
-			setAuthenticated(true);
-		} else {
-			setAuthenticated(false);
-		}
-	}, [session, gqlclient, setAuthenticated]);
-
 	let store = false;
 	if (data) {
 		store = Object.fromEntries(

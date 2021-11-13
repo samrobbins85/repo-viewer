@@ -2,26 +2,13 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import useSWRInfinite from "swr/infinite";
 import { useSession } from "next-auth/client";
-import { useEffect, useState } from "react";
 import Error from "next/error";
 
-export default function Topic({ gqlclient }) {
+export default function Topic() {
 	const router = useRouter();
 	const [session] = useSession();
-	const [authenticated, setAuthenticated] = useState(false);
 
 	const { topic } = router.query;
-	useEffect(() => {
-		if (session?.accessToken) {
-			gqlclient.setHeader(
-				"authorization",
-				`Bearer ${session.accessToken}`
-			);
-			setAuthenticated(true);
-		} else {
-			setAuthenticated(false);
-		}
-	}, [session, gqlclient, setAuthenticated]);
 	const getKey = (previousPageData, topic) => {
 		if (previousPageData && !previousPageData.search.pageInfo.hasNextPage)
 			return null;
@@ -56,7 +43,7 @@ export default function Topic({ gqlclient }) {
 		  }`;
 	};
 	const { data, error } = useSWRInfinite(
-		authenticated &&
+		session.accessToken &&
 			((_, previousPageData) => getKey(previousPageData, topic)),
 		{ initialSize: 10 }
 	);
