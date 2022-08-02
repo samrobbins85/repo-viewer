@@ -13,7 +13,7 @@
 		"graphql-request": "^3.5.0",
 		"lodash": "^4.17.21",
 		"next": "^12.1.0",
-		"next-auth": "^3.29.8",
+		"next-auth": "^3.29.10",
 		"postcss": "^8.3.6",
 		"postcss-import": "^14.0.2",
 		"react": "^17.0.1",
