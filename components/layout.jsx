@@ -1,13 +1,14 @@
-import { signIn, signOut, useSession } from "next-auth/client";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import LandingPage from "./landingpage";
 export default function Layout({ children }) {
-	const [session, loading] = useSession();
+	const { data: session, status } = useSession();
+	const loading = status === "loading";
 	return (
 		<div className="h-screen flex flex-col">
 			<nav className="bg-gray-100 py-2 flex px-4 justify-between">
-				<Link href="/">
-					<a className="font-bold">Repository Viewer</a>
+				<Link href="/" className="font-bold">
+					Repository Viewer
 				</Link>
 				{!session && (
 					<>

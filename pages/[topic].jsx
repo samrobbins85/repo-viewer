@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
 import useSWRInfinite from "swr/infinite";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import Error from "next/error";
 
 export default function Topic() {
 	const router = useRouter();
-	const [session] = useSession();
+	const { data: session } = useSession();
 
 	const { topic } = router.query;
 	const getKey = (previousPageData, topic) => {

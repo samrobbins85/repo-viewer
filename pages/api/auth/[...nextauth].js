@@ -1,12 +1,17 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+// import Providers from "next-auth/providers";
+import GithubProvider from "next-auth/providers/github";
 
 export default NextAuth({
 	providers: [
-		Providers.GitHub({
+		GithubProvider({
 			clientId: process.env.GITHUB_ID,
 			clientSecret: process.env.GITHUB_SECRET,
-			scope: "repo, user",
+			authorization: {
+				params: {
+					scope: "repo, user",
+				},
+			},
 			profile(profile) {
 				return {
 					id: profile.id,
@@ -18,13 +23,13 @@ export default NextAuth({
 		}),
 	],
 	callbacks: {
-		async jwt(token, _, account) {
-			if (account?.accessToken) {
-				token.accessToken = account.accessToken;
+		async jwt({ token, account }) {
+			if (account?.access_token) {
+				token.accessToken = account.access_token;
 			}
 			return token;
 		},
-		async session(session, token) {
+		async session({ session, token }) {
 			session.accessToken = token.accessToken;
 			return session;
 		},

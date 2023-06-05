@@ -1,10 +1,13 @@
 import "../styles/index.css";
 import Head from "next/head";
-import { Provider } from "next-auth/client";
+import { SessionProvider } from "next-auth/react";
 import Layout from "../components/layout";
 import SWRProvider from "../providers/auth";
 
-function MyApp({ Component, pageProps }) {
+export default function App({
+	Component,
+	pageProps: { session, ...pageProps },
+}) {
 	return (
 		<>
 			<Head>
@@ -16,15 +19,13 @@ function MyApp({ Component, pageProps }) {
 					crossOrigin="anonymous"
 				/>
 			</Head>
-			<Provider session={pageProps.session}>
+			<SessionProvider session={session}>
 				<SWRProvider>
 					<Layout>
 						<Component {...pageProps} />
 					</Layout>
 				</SWRProvider>
-			</Provider>
+			</SessionProvider>
 		</>
 	);
 }
-
-export default MyApp;
